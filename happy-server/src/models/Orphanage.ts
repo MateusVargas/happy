@@ -2,14 +2,15 @@
 //"experimentalDecorators": true,
 //"emitDecoratorMetadata": true // habilitando decorator
 
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm'
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn } from 'typeorm'
+import Image from './Image'
 
 @Entity('orphanages') // associando o model com a tabela
 export default class Orphanage{
     @PrimaryGeneratedColumn('increment')
     id: number
 
-    @Column()
+    @Column() //colunas no banco recebem diretiva @Column
     name: number
 
     @Column()
@@ -29,4 +30,10 @@ export default class Orphanage{
 
     @Column()
     open_on_weekends: boolean
+
+    @OneToMany(() => Image, image => image.orphanage, {
+        cascade: ['insert', 'update', 'remove']
+    }) //relacionamento um pra muitos
+    @JoinColumn({ name: 'orphanage_id' })
+    images: Image[]
 }
