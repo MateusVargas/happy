@@ -1,4 +1,5 @@
-import React,{useState,FormEvent} from "react";
+import React,{useState,FormEvent, ChangeEvent} from "react";
+import { useHistory } from 'react-router-dom'
 import { Map, Marker, TileLayer } from 'react-leaflet';
 import { LeafletMouseEvent } from 'leaflet'
 import { FiPlus } from "react-icons/fi";
@@ -8,13 +9,19 @@ import '../styles/pages/create-orphanage.css';
 import Sidebar from '../components/Sidebar'
 import mapIcon from '../utils/mapIcon'
 
+import api from '../services/api'
+
 export default function CreateOrphanage() {
+  const history = useHistory()
 
   const [name, setName] = useState('')
   const [about, setAbout] = useState('')
   const [instructions, setInstructions] = useState('')
   const [opening_hours, setOpening_hours] = useState('')
   const [open_on_weekends, setOpen_on_weekends] = useState(true)
+  
+  const [images, setImages] = useState<File[]>([])
+  const [previewImages, setPreviewImages] = useState<string[]>([])
 
   const [position, setPosition] = useState({
     latitude: 0,
@@ -29,19 +36,42 @@ export default function CreateOrphanage() {
     })
   }
 
-  function handleSubmit(event: FormEvent){
-    event.preventDefault()
-    const { latitude, longitude } = position
+  function handleSelectImages(event: ChangeEvent<HTMLInputElement>) {
+    if(!event.target.files){
+      return
+    }
+    const selectedImages = Array.from(event.target.files)
+    setImages(selectedImages)
 
-    console.log({
-      latitude,
-      longitude,
-      name,
-      about,
-      opening_hours,
-      instructions,
-      open_on_weekends
+    const selectedImagesPreview = selectedImages.map(image => {
+      return URL.createObjectURL(image)
     })
+    setPreviewImages(selectedImagesPreview)
+  }
+
+  async function handleSubmit(event: FormEvent){
+    event.preventDefault()
+
+    const { latitude, longitude } = position
+    const data = new FormData()
+    data.append('name', name)
+    data.append('about', about)
+    data.append('latitude', String(latitude))//importante converter para string
+    data.append('longitude', String(longitude))
+    data.append('instructions', instructions)
+    data.append('opening_hours', opening_hours)
+    data.append('open_on_weekends', String(open_on_weekends))
+    
+    images.forEach(img => {
+      data.append('images', img)
+    })
+
+    const response = await api.post('orphanages',data)
+
+    if(response.status === 201){
+      alert('CADASTRADO COM SUCESSO')
+      history.push('/app')
+    }
   }
 
   return (
@@ -91,13 +121,20 @@ export default function CreateOrphanage() {
             <div className="input-block">
               <label htmlFor="images">Fotos</label>
 
-              <div className="uploaded-image">
+              <div className="images-container">
+                {previewImages.map(img => {
+                  return (
+                    <img key={img} src={img} alt={name} />
+                  )
+                })}
 
+                <label htmlFor="image[]" className="new-image">
+                  <FiPlus size={24} color="#15b6d6" />
+                </label>
               </div>
 
-              <button type="button" className="new-image">
-                <FiPlus size={24} color="#15b6d6" />
-              </button>
+              <input type="file" id="image[]" multiple onChange={handleSelectImages}/>
+              
             </div>
           </fieldset>
 
