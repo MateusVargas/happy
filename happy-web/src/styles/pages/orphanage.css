@@ -172,3 +172,15 @@
 .orphanage-details .orphanage-details-content button.contact-button:hover {
   background: #36CF82;
 }
+
+@media(max-width: 700px){
+  #page-orphanage {
+    flex-direction: column;
+  }
+  .orphanage-details {
+    width: 100%;
+  } 
+  .orphanage-details .orphanage-details-content {
+    padding: 20px;
+  }
+}

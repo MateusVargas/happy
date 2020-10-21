@@ -88,3 +88,37 @@
 #page-map .map-popup .leaflet-popup-tip-container{
 	display: none;
 }
+
+@media(max-width: 700px){
+	#page-map{
+		flex-direction: column;
+	}
+	#page-map aside{
+		width: 100%;
+		height: 40%;
+		padding: 10px;
+		flex-direction: row;
+	}
+	#page-map aside img{
+		width: 40px;
+	}
+	#page-map aside h2{
+		font-size: 20px;
+		line-height: 20px;
+		margin-top: 14px;
+	}
+	#page-map aside p{
+		font-size: 15px;
+		line-height: 20px;
+		margin-top: 14px;
+	}
+	#page-map aside footer {
+		font-size: 15px;
+    	margin-right: 8px;
+	}
+	#page-map .create-orphanage {
+	    right: 20px;
+	    width: 50px;
+	    height: 50px;
+	}
+}

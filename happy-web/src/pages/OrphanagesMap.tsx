@@ -23,13 +23,11 @@ export default function OrphanagesMap(){
 	const [orphanages, setOrphaneges] = useState<Orphanage[]>([])
 
 	useEffect(()=>{
-		try{
 			api.get('orphanages').then(resp => {
 				setOrphaneges(resp.data)
+			}).catch(error => {
+				console.error(error)
 			})
-		}catch(error){
-			console.error(error)
-		}
 	},[])
 
 	return(
